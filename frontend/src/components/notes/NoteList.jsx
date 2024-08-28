@@ -95,10 +95,15 @@ export default function NoteList() {
         <NoteEditor 
           note={selectedNote} 
           onClose={() => setShowEditor(false)}
+          onDelete = {(existingNote) => {
+            setNotes(prev => prev.filter(n => n._id !== existingNote._id));
+          }}
           onSave={(newNote) => {
             setNotes(prev => 
               selectedNote 
-                ? prev.map(n => n._id === newNote._id ? newNote : n)
+                ? (
+                  prev.map(n => n._id === newNote._id ? newNote : n)
+                )
                 : [newNote, ...prev]
             );
           }}

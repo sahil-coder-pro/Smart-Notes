@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react';
 import { Modal, TextInput, Textarea, Button } from 'flowbite-react';
 import LabelsModal from './LabelsModal';
 import ColorPicker from './ColorPicker';
-import { createNote, updateNote, analyzeNote } from '../../services/notes';
+import { createNote, updateNote, analyzeNote, deleteNote } from '../../services/notes';
 import { COLORS } from '../../utils/constants';
-import { showToast } from '../../utils/toast';
 import ReactMarkdown from 'react-markdown';
+import { MdDelete } from "react-icons/md";
 
-export default function NoteEditor({ note, onClose, onSave }) {
+export default function NoteEditor({ note, onClose, onSave, onDelete }) {
   const [formData, setFormData] = useState({
     title: note?.title || '',
     content: note?.content || '',
@@ -55,11 +55,24 @@ export default function NoteEditor({ note, onClose, onSave }) {
     }
   };
 
+  const handleNoteDelete = async () => {
+    try {
+      await deleteNote(note._id);
+      onDelete(note) ;
+      onClose();
+    } catch (err) {
+      console.error('Failed to delete note:', err);
+    }
+  };
+
   return (
     <Modal show={true} onClose={onClose} size="4xl">
       <Modal.Header>{note?._id ? 'Edit Note' : 'New Note'}</Modal.Header>
       <Modal.Body>
         <div className="space-y-4">
+
+          <MdDelete className='ml-auto' onClick = {handleNoteDelete} />
+            
           <TextInput
             placeholder="Title"
             value={formData.title}
