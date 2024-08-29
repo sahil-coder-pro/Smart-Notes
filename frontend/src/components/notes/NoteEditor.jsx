@@ -71,7 +71,7 @@ export default function NoteEditor({ note, onClose, onSave, onDelete }) {
       <Modal.Body>
         <div className="space-y-4">
 
-          <MdDelete className='ml-auto' onClick = {handleNoteDelete} />
+          <MdDelete className='ml-auto dark:text-gray-400' onClick = {handleNoteDelete} />
             
           <TextInput
             placeholder="Title"
@@ -89,16 +89,16 @@ export default function NoteEditor({ note, onClose, onSave, onDelete }) {
           {(formData.aiResponse || note?.aiResponse) && (
             <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded">
               <h4 className="font-semibold mb-2 dark:text-white">AI Insights</h4>
-              <p className="text-gray-600 dark:text-gray-300">
-                <ReactMarkdown>
+              <div className="text-gray-600 dark:text-gray-300">
+                <ReactMarkdown >
 
                 {formData.aiResponse ? formData.aiResponse : note.aiResponse}
                 </ReactMarkdown>
-                </p>
+                </div>
             </div>
           )}
           
-          <div className="flex gap-4">
+          <div className="flex-col  sm:flex-row flex gap-4  ">
             <Button onClick={() => setShowLabelsModal(true)}>
               Labels ({formData.labels.length})
             </Button>
@@ -109,7 +109,7 @@ export default function NoteEditor({ note, onClose, onSave, onDelete }) {
             />
             
             <Button gradientMonochrome="teal" onClick={handleAnalyze}>
-              AI Analysis
+              {(formData.aiResponse || note?.aiResponse) ? "Analyze" :'AI Analysis'}
             </Button>
           </div>
           

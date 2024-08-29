@@ -29,7 +29,7 @@ export default function Filters({ filters, setFilters, notes }) {
       >
         <option className = "bg-white text-black" value="">All Colors</option>
         {uniqueColors.map(color => (
-          <option key={color} className = "text-white p-1 self-center outline" value={color} style={{ backgroundColor: color }}>
+          <option key={color} className = "text-white p-2" value={color} style={{ backgroundColor: color }}>
             {color}
           </option>
         ))}

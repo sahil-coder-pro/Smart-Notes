@@ -28,6 +28,10 @@ export default function NoteList() {
   });
 
   useEffect(() => {
+    console.log('notes', notes) ;
+  }, [notes])
+
+  useEffect(() => {
     const loadNotes = async () => {
       try {
         const data = await fetchNotes();
@@ -47,7 +51,7 @@ export default function NoteList() {
     <div className="p-4 dark:bg-gray-900 min-h-screen">
       <Filters filters={filters} setFilters={setFilters} notes={notes} />
       
-      <div className="columns-1 md:columns-2 lg:columns-3 gap-4 space-y-4">
+      <div className="columns-1 md:columns-2 lg:columns-3 gap-4 space-y-4  md:pr-2">
         {filteredNotes.map(note => (
           <Card 
             key={note._id} 
