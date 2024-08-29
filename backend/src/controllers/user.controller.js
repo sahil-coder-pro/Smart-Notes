@@ -24,7 +24,7 @@ export const signupUser = async (req, res) => {
           
         }
         
-    const {password:_, ...userDetails} = newUser ;
+    const {password:_, ...userDetails} = newUser._doc ;
       return res.status(201).json({ message: "User registered successfully" , success: true, data:{user: userDetails} });
 
 

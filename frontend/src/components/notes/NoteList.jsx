@@ -6,6 +6,7 @@ import Filters from './Filters';
 import { fetchNotes } from '../../services/notes';
 import { useAuth } from '../../contexts/AuthContext';
 
+
 export default function NoteList() {
   const [notes, setNotes] = useState([]);
   const [showEditor, setShowEditor] = useState(false);
@@ -15,7 +16,7 @@ export default function NoteList() {
     label: '',
     color: ''
   });
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
   const filteredNotes = notes.filter(note => {
     const searchMatch = `${note.title} ${note.content}`
@@ -27,49 +28,44 @@ export default function NoteList() {
   });
 
   useEffect(() => {
-    console.log("Notes changed", notes);
-  }, [notes])
-
-  useEffect(() => {
     const loadNotes = async () => {
       try {
         const data = await fetchNotes();
         setNotes(data);
       } catch (err) {
         console.error('Failed to load notes:', err);
+        setNotes([]);
       }
     };
-    if (user) loadNotes();
-  }, [user]);
+
+    // Clear notes when user changes
+    setNotes([]);
+    if (user && !loading) loadNotes();
+  }, [user, loading]);
 
   return (
     <div className="p-4 dark:bg-gray-900 min-h-screen">
       <Filters filters={filters} setFilters={setFilters} notes={notes} />
       
       <div className="columns-1 md:columns-2 lg:columns-3 gap-4 space-y-4">
-        
         {filteredNotes.map(note => (
           <Card 
-          key={note._id} 
-          className={"break-inside-avoid mb-4 dark:bg-gray-800 cursor-pointer "  
-            // + `bg-[${note.color}]`
-          }
-          style={{backgroundColor: note.color, filter: "brightness(1.4))"}}
-          onClick={() => {
-            setSelectedNote(note);
-            setShowEditor(true);
-          }}
+            key={note._id} 
+            className="break-inside-avoid mb-4 dark:bg-gray-800 cursor-pointer"
+            style={{backgroundColor: note.color, filter: "brightness(1.4))"}}
+            onClick={() => {
+              setSelectedNote(note);
+              setShowEditor(true);
+            }}
           >
-            {/* {console.log(`bg-[${note.color}]`)} */}
             <div className="space-y-2">
-              <h3 className="text-2xl font-semibold dark:text-white text-ellipsis overflow-hidden">{note.title}</h3>
+              <h3 className="text-2xl font-semibold dark:text-white break-words">{note.title}</h3>
               <p className="text-gray-200 dark:text-gray-200 break-words">{note.content}</p>
               <div className="flex flex-wrap gap-2">
                 {note.labels?.map(label => (
                   <span 
                     key={label}
-                    className="px-2 py-1 rounded bg-gray-200/40 dark:bg-gray-200/40  text-sm text-ellipsis overflow-hidden"
-                    
+                    className="px-2 py-1 rounded bg-gray-200/40 dark:bg-gray-200/40  text-sm  text-ellipsis overflow-hidden whitespace-nowrap"
                   >
                     {label}
                   </span>

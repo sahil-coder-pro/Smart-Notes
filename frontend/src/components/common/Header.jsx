@@ -5,8 +5,10 @@ import { useAuth } from '../../contexts/AuthContext'
 import { useState } from 'react';
 
 export default function Header() {
-  const { user, logout } = useAuth() ;
-  const [darkMode, setDarkMode] = useState(false);
+  const { user, logout, loading } = useAuth() ;
+  const [darkMode, setDarkMode] = useState(localStorage.getItem('darkMode') === 'true');
+
+  if (loading) return null ;
 
   if (darkMode) {
     document.documentElement.classList.add('dark');

@@ -7,31 +7,36 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [authChecked, setAuthChecked] = useState(false);
   const navigate = useNavigate();
 
   const initializeAuth = async () => {
-    const accessToken = localStorage.getItem('accessToken');
-    if (!accessToken) {
-      setLoading(false);
-      return;
-    }
-
     try {
+      const accessToken = localStorage.getItem('accessToken');
+      if (!accessToken) {
+        setAuthChecked(true);
+        return;
+      }
+
+      // Verify existing token
       const { data } = await API.get('/users/me');
       setUser(data.data.user);
     } catch (err) {
       try {
-        const { accessToken, refreshToken } = await refreshToken();
+        // Refresh tokens if invalid
+        const { accessToken, refreshToken: newRefreshToken } = await refreshToken();
         localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('refreshToken', refreshToken);
+        localStorage.setItem('refreshToken', newRefreshToken);
+        
+        // Get fresh user data
         const { data } = await API.get('/users/me');
         setUser(data.data.user);
       } catch (error) {
         logout();
       }
+    } finally {
+      setAuthChecked(true);
     }
-    setLoading(false);
   };
 
   const login = async (email, password) => {
@@ -43,15 +48,15 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signup = async (name, email, password) => {
-    const { accessToken, refreshToken, user } = await signupUser(name, email, password);
-    localStorage.setItem('accessToken', accessToken);
-    localStorage.setItem('refreshToken', refreshToken);
-    setUser(user);
+    await signupUser(name, email, password);
     navigate('/');
   };
 
   const logout = () => {
+    console.log(document.cookie) ;
     localStorage.clear();
+    sessionStorage.clear() ;
+
     setUser(null);
     navigate('/login');
   };
@@ -61,7 +66,13 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, logout }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      loading: !authChecked,
+      login, 
+      signup, 
+      logout 
+    }}>
       {children}
     </AuthContext.Provider>
   );

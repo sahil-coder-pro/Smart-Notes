@@ -1,10 +1,11 @@
 // src/components/notes/ColorPicker.jsx
 import { Button } from 'flowbite-react';
+import { COLORS as colors } from '../../utils/constants';
 
-const colors = [
-  '#ffffff', '#fbbf24', '#60a5fa', '#34d399',
-  '#f472b6', '#fb7185', '#a78bfa', '#4f46e5'
-];
+// const colors = [
+//   '#ffffff', '#fbbf24', '#60a5fa', '#34d399',
+//   '#f472b6', '#fb7185', '#a78bfa', '#4f46e5'
+// ];
 
 export default function ColorPicker({ selectedColor, onChange }) {
   return (

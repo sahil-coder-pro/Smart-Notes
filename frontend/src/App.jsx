@@ -5,8 +5,7 @@ import Login from './components/auth/Login'
 import Signup from './components/auth/Signup'
 import NoteList from './components/notes/NoteList'
 import Header from './components/common/Header'
-import NotePreview from './components/notes/NotePreview'
-import NoteForm from './components/notes/NoteForm'
+import { Spinner } from 'flowbite-react'
 
 
 function App() {
@@ -18,17 +17,6 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/" element={<ProtectedRoute><NoteList /></ProtectedRoute>} />
-          <Route path="/notes/:noteId" element={
-            <ProtectedRoute>
-              <NotePreview />
-            </ProtectedRoute>
-          } />
-          <Route path="/notes/new" element={
-  <ProtectedRoute>
-    <NoteForm />
-  </ProtectedRoute>
-} />
-
         </Routes>
       </AuthProvider>
     </BrowserRouter>
@@ -36,9 +24,17 @@ function App() {
 }
 
 const ProtectedRoute = ({ children }) => {
-  const { user } = useAuth() ;
+  const { user, loading } = useAuth() ;
   console.log("user in protected route", user) ;
-  return user ? children : <Navigate to="/login" replace />
+   if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Spinner aria-label="Loading..." size="xl" />
+      </div>
+    );
+  }
+
+  return user ? children : <Navigate to="/login" replace />;
 }
 
 export default App
