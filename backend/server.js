@@ -9,7 +9,11 @@ const app = express();
 const PORT = process.env.PORT ;
 
 // Middleware
-app.use(cors({origin: process.env.CLIENT_URL, credentials: true}));
+app.use(cors({origin: process.env.CLIENT_URL, credentials: true,
+  methods: "GET,PATCH,POST,DELETE",
+  allowedHeaders: ["Content-Type", "Authorization"],
+  exposedHeaders: ["Content-Range", "X-Content-Range"],
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser()) ;
