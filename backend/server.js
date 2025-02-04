@@ -10,9 +10,23 @@ const PORT = process.env.PORT ;
 
 console.log("Allowed frontend url", process.env.CLIENT_URL) ;
 
+const allowedOrigins = [
+  process.env.CLIENT_URL, // Your Vercel URL
+  "http://localhost:5173" // For local testing (optional)
+];
+
 // Middleware
 app.use(cors({
-  origin: [process.env.CLIENT_URL, "http://localhost:5173"], 
+  origin: (origin, callback) => {
+      // Allow requests with no origin (Postman/curl)
+      if (!origin) return callback(null, true);
+      
+      if (allowedOrigins.some(allowedOrigin => origin.startsWith(allowedOrigin))) {
+        callback(null, true);
+      } else {
+        callback(new Error("CORS blocked: Origin not allowed"));
+      }
+  },
   credentials: true,
   methods: "GET,PATCH,POST,DELETE",
   allowedHeaders: ["Content-Type", "Authorization"],
