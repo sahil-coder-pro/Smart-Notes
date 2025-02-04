@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Modal, TextInput, Textarea, Button } from 'flowbite-react';
+import { Modal, TextInput, Textarea, Button, Spinner } from 'flowbite-react';
 import LabelsModal from './LabelsModal';
 import ColorPicker from './ColorPicker';
 import { createNote, updateNote, analyzeNote, deleteNote } from '../../services/notes';
 import { COLORS } from '../../utils/constants';
 import ReactMarkdown from 'react-markdown';
 import { MdDelete } from "react-icons/md";
+import { useRef } from 'react';
 
 export default function NoteEditor({ note, onClose, onSave, onDelete }) {
   const [formData, setFormData] = useState({
@@ -16,6 +17,7 @@ export default function NoteEditor({ note, onClose, onSave, onDelete }) {
   });
   const [showLabelsModal, setShowLabelsModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const loadingAnalysis = useRef(false) ;
 
   const handleSubmit = async () => {
     console.log("Editting this note", note) ;
@@ -38,10 +40,14 @@ export default function NoteEditor({ note, onClose, onSave, onDelete }) {
 
   const handleAnalyze = async () => {
 
-    if (!note) {
-        console.log("Save this note first")
-        return ;
-    }
+      
+      if (!note) {
+          console.log("Save this note first")
+          return ;
+        }
+    setLoading(true) ;
+    loadingAnalysis.current = true ;
+
     try {
         console.log("Formdata", formData) ;
 
@@ -50,8 +56,13 @@ export default function NoteEditor({ note, onClose, onSave, onDelete }) {
         ...prev,
         aiResponse: analysis
       }));
+
     } catch (err) {
       console.error('Analysis failed:', err);
+    }
+    finally {
+      loadingAnalysis.current = false ;
+      setLoading(false) ;
     }
   };
 
@@ -85,7 +96,7 @@ export default function NoteEditor({ note, onClose, onSave, onDelete }) {
             value={formData.content}
             onChange={e => setFormData(prev => ({ ...prev, content: e.target.value }))}
           />
-
+        
           {(formData.aiResponse || note?.aiResponse) && (
             <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded">
               <h4 className="font-semibold mb-2 dark:text-white">AI Insights</h4>
@@ -108,8 +119,8 @@ export default function NoteEditor({ note, onClose, onSave, onDelete }) {
               onChange={color => setFormData(prev => ({ ...prev, color }))}
             />
             
-            <Button gradientMonochrome="teal" onClick={handleAnalyze}>
-              {(formData.aiResponse || note?.aiResponse) ? "Analyze" :'AI Analysis'}
+            <Button gradientMonochrome="teal" onClick={handleAnalyze} disabled={loadingAnalysis.current}>
+              {(loading && loadingAnalysis.current) ? <Spinner/>  : (formData.aiResponse || note?.aiResponse) ? "Analyze" :'AI Analysis'}
             </Button>
           </div>
           
@@ -118,7 +129,7 @@ export default function NoteEditor({ note, onClose, onSave, onDelete }) {
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={handleSubmit} disabled={loading}>
-          {loading ? 'Saving...' : 'Save Note'}
+          {loading ? <Spinner/> : 'Save Note'}
         </Button>
         <Button color="gray" onClick={onClose}>
           Cancel

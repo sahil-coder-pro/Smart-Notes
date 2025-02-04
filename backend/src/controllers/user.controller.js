@@ -69,14 +69,16 @@ export const loginUser = async (req, res) =>  {
       return res
           .status(200)
           .cookie("accessToken", accessToken, {
-            // httpOnly: true,
-            // secure: true,
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
             maxAge: 1000*60*15,
-
+                
           })
           .cookie("refreshToken", refreshToken, {
-            // httpOnly: true,
-            // secure: true,
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
             maxAge: 1000*60*60*24*10,
           })
           .json({ message: "User logged in successfully" , success: true, data:{user: userDetails, accessToken, refreshToken} });
@@ -147,8 +149,9 @@ export const refreshTheAccessToken = async (req, res) => {
         return res
             .status(200)
             .cookie("accessToken", accessToken, {
-                // httpOnly: true,
-                // secure: true,
+                httpOnly: true,
+                secure: true,
+                sameSite: "none",
                 maxAge: 1000*60*15,
             })
             .json({ message: "Access token refreshed successfully" , success: true, data:{accessToken, refreshToken} });

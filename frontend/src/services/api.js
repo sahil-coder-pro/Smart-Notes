@@ -2,13 +2,16 @@ import axios from 'axios';
 
 const API = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  withCredentials: true
+  withCredentials: "include",
 });
 
 // Request interceptor
 API.interceptors.request.use(config => {
   const token = localStorage.getItem('accessToken');
   if (token) config.headers.Authorization = `Bearer ${token}`;
+  if (config.method === 'options') {
+    config.headers['Access-Control-Allow-Methods'] = 'GET,PATCH,POST,DELETE';
+  }
   return config;
 });
 
