@@ -66,3 +66,9 @@ npm install
 # Start React development server
 npm run dev
 ```
+
+### 3. Hosted Link
+```bash
+https://smart-notes-self.vercel.app/
+```
+> TEST CREDENTIALS email - sahil@s.com    password - 123
