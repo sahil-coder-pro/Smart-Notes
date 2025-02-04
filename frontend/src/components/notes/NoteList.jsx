@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, Button } from 'flowbite-react';
 import { FaPlus } from 'react-icons/fa';
 import NoteEditor from './NoteEditor';
 import Filters from './Filters';
 import { fetchNotes } from '../../services/notes';
 import { useAuth } from '../../contexts/AuthContext';
-
+import ReactMarkdown from 'react-markdown';
 
 export default function NoteList() {
   const [notes, setNotes] = useState([]);
@@ -64,7 +64,11 @@ export default function NoteList() {
           >
             <div className="space-y-2">
               <h3 className="text-2xl font-semibold dark:text-white break-words">{note.title}</h3>
-              <p className="text-gray-200 dark:text-gray-200 break-words">{note.content}</p>
+              <div className="text-gray-200 dark:text-gray-200 break-words">
+                <ReactMarkdown>
+                {note.content}
+                </ReactMarkdown>
+              </div>
               <div className="flex flex-wrap gap-2">
                 {note.labels?.map(label => (
                   <span 
